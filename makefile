@@ -1,4 +1,4 @@
-CFLAGS := -Wall -MMD -MP
+CFLAGS := -Wall -MMD -MP -g
 CXX := g++
 TEST_DIR := test
 FFMPEG_DIR := /c/ffmpeg-7.0
