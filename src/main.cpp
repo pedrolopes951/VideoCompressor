@@ -1,3 +1,4 @@
+#define SDL_MAIN_HANDLED
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -15,7 +16,8 @@ extern "C"
 
 #include "../include/VideoCompressorContext.h"
 #include "../include/VideoCompressor.h"
-#include <iostream>
+#include "../include/GUI.h"
+
 
 [[maybe_unused]]
 static void printVersionLibs()
@@ -63,5 +65,22 @@ int main(int argc, char *argv[])
     }
 
     std::cout << "Video compressed successfully to " << outputPath << std::endl;
+
+    // TODO: GUI needs fixing, just rendering black screen
+    // GUI gui;
+    // gui.initialize();
+
+    // // Main loop
+    // bool run = true;
+    // while (run) {
+    //     SDL_Event event;
+    //     while (SDL_PollEvent(&event)) {
+    //         ImGui_ImplSDL2_ProcessEvent(&event);
+    //         if (event.type == SDL_QUIT)
+    //             run = false;
+    //     }
+    //     gui.render();
+    // }
+
     return 0;
 }
