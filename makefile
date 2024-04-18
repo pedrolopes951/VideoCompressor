@@ -1,6 +1,4 @@
-CFLAGS := -Wall -MMD -MP -g
 CXX := g++
-TEST_DIR := test
 FFMPEG_DIR := /c/ffmpeg-7.0
 SDL_PATH := /c/SDL2
 IMGUI_PATH := /c/imgui
@@ -17,9 +15,9 @@ INCLUDES := -I$(FFMPEG_DIR) \
             -I$(IMGUI_PATH) \
             -I$(IMGUI_PATH)/backends
 
-CXXFLAGS += $(INCLUDES)
+CXXFLAGS := -Wall -MMD -MP -g $(INCLUDES)
 LDFLAGS := $(foreach dir, $(FFMPEG_LIB_DIRS), -L$(dir)) -L$(SDL_PATH)/lib/x64
-LDLIBS :=-lSDL2 -lSDL2main -lavcodec -lavformat -lavfilter -lswscale -lavutil 
+LDLIBS := -lSDL2 -lSDL2main -lavcodec -lavformat -lavfilter -lswscale -lavutil 
 
 IMGUI_SOURCES := $(IMGUI_PATH)/imgui.cpp \
                  $(IMGUI_PATH)/imgui_draw.cpp \
@@ -28,16 +26,17 @@ IMGUI_SOURCES := $(IMGUI_PATH)/imgui.cpp \
                  $(IMGUI_PATH)/backends/imgui_impl_sdl2.cpp \
                  $(IMGUI_PATH)/backends/imgui_impl_sdlrenderer2.cpp
 
+IMGUI_OBJS := $(IMGUI_SOURCES:.cpp=.o)
 
 SRC_DIR := src
 BUILD_DIR := build
 SRCS := $(wildcard $(SRC_DIR)/*.cpp) $(IMGUI_SOURCES)
-SRCSTEST := $(filter-out $(SRC_DIR)/main.cpp, $(wildcard $(SRC_DIR)/*.cpp))
 OBJS := $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
-OBJSTEST := $(SRCSTEST:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
+
+TEST_DIR := test
 TEST_SRCS := $(wildcard $(TEST_DIR)/*.cpp)
-TEST_OBJS := $(TEST_SRCS:$(TEST_DIR)/%.cpp=$(BUILD_DIR)/test/%.o)
+TEST_OBJS := $(TEST_SRCS:%.cpp=$(BUILD_DIR)/%.o)
 TEST_EXECUTABLE := $(BUILD_DIR)/runTests
 
 EXECUTABLE := $(BUILD_DIR)/VideoCompressor
@@ -46,26 +45,19 @@ all: $(EXECUTABLE)
 
 $(BUILD_DIR)/%.o: %.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(EXECUTABLE): $(OBJS)
-	mkdir -p $(@D)
 	$(CXX) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 tests: $(TEST_EXECUTABLE)
 
-$(TEST_EXECUTABLE): $(TEST_OBJS) $(OBJSTEST)  # Link test objs and regular objs excluding main.o
-	mkdir -p $(@D)
-	$(CXX) $^ -o $@
-	./$(TEST_EXECUTABLE)
-
-$(BUILD_DIR)/test/%.o: $(TEST_DIR)/%.cpp
-	mkdir -p $(@D)
-	$(CXX) $(CFLAGS) -c $< -o $@
+$(TEST_EXECUTABLE): $(TEST_OBJS) $(filter-out $(BUILD_DIR)/$(SRC_DIR)/main.o, $(OBJS))
+	$(CXX) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) $(DEPS)
 
 -include $(DEPS)
 
-.PHONY: all clean
+.PHONY: all clean tests
