@@ -13,7 +13,8 @@ INCLUDES := -I$(FFMPEG_DIR) \
             -I$(FFMPEG_DIR)/libavfilter \
             -I$(SDL_PATH)/include \
             -I$(IMGUI_PATH) \
-            -I$(IMGUI_PATH)/backends
+            -I$(IMGUI_PATH)/backends \
+            -I../src  # Include the project's main source directory for headers
 
 CXXFLAGS := -Wall -MMD -MP -g $(INCLUDES)
 LDFLAGS := $(foreach dir, $(FFMPEG_LIB_DIRS), -L$(dir)) -L$(SDL_PATH)/lib/x64
@@ -26,34 +27,25 @@ IMGUI_SOURCES := $(IMGUI_PATH)/imgui.cpp \
                  $(IMGUI_PATH)/backends/imgui_impl_sdl2.cpp \
                  $(IMGUI_PATH)/backends/imgui_impl_sdlrenderer2.cpp
 
-IMGUI_OBJS := $(IMGUI_SOURCES:.cpp=.o)
+IMGUI_OBJS := $(IMGUI_SOURCES:%.cpp=%.o)
 
-SRC_DIR := src
-BUILD_DIR := build
-SRCS := $(wildcard $(SRC_DIR)/*.cpp) $(IMGUI_SOURCES)
-OBJS := $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
-DEPS := $(OBJS:.o=.d)
+BUILD_DIR := ./build
+TEST_DIR := .
+SRC_FILES := $(wildcard $(TEST_DIR)/*.cpp)
+TEST_EXECS := $(SRC_FILES:$(TEST_DIR)/%.cpp=$(BUILD_DIR)/%)
 
-TEST_DIR := test
+all: $(TEST_EXECS)
 
-EXECUTABLE := $(BUILD_DIR)/VideoCompressor
+$(BUILD_DIR)/%: $(TEST_DIR)/%.cpp $(IMGUI_OBJS)
+	mkdir -p $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $< $(IMGUI_OBJS) $(LDFLAGS) $(LDLIBS) -o $@
 
-all: $(EXECUTABLE)
-
-$(BUILD_DIR)/%.o: %.cpp
-	mkdir -p $(dir $@)
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(EXECUTABLE): $(OBJS)
-	$(CXX) $(LDFLAGS) $^ -o $@ $(LDLIBS)
-
-tests:
-	cd $(TEST_DIR) && $(MAKE)
-
 clean:
-	rm -rf $(BUILD_DIR) $(DEPS)
-	cd $(TEST_DIR) && $(MAKE) clean
+	rm -rf $(BUILD_DIR) *.o *.d
 
--include $(DEPS)
+-include $(BUILD_DIR)/*.d
 
-.PHONY: all clean tests
+.PHONY: all clean
