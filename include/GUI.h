@@ -13,7 +13,7 @@
 */
 
 enum class CompressionMethod {
-    TwoPass,   
+    TwoPass  
     //TODO: Need to had more methods here
 };
 

@@ -2,7 +2,9 @@
 #include "../include/VideoCompressor.h"
 #include <iostream>
 
-const char *g_CompressionMethodNames[] = {"Two-Pass", "Single-Pass"};
+const char *g_CompressionMethodNames[] = {"Two-Pass"};
+
+const int g_NumberMethods = 1;
 
 
 GUI::GUI() :selectedMethod(CompressionMethod::TwoPass), targetSizeMB(0)
@@ -60,7 +62,7 @@ void GUI::showSettingsWindow()
     // Dropdown for selecting compression method
     if (ImGui::BeginCombo("Compression Method", g_CompressionMethodNames[static_cast<int>(selectedMethod)]))
     {
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < g_NumberMethods; i++)
         {
             bool isSelected = (selectedMethod == static_cast<CompressionMethod>(i));
             if (ImGui::Selectable(g_CompressionMethodNames[i], isSelected))
