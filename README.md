@@ -1,41 +1,52 @@
 # Video Compressor
 
 ## Overview
-Tool for compressing video files. It uses the Two-Pass compression method to optimize video size reduction while maintaining quality. The backend is powered by FFmpeg for video processing, SDL2 for handling graphical output [under development], and Dear ImGui for a  GUI implementation [under development].
+Video Compressor is a tool designed to optimize the size of video files using advanced compression techniques while striving to maintain the original quality. The project integrates FFmpeg for robust video processing capabilities, SDL2 for graphical output, and Dear ImGui for creating an intuitive graphical user interface.
 
 ## Dependencies
-- **FFmpeg 1.0**: For video processing.
-- **SDL2**: For rendering graphical components.
-- **Dear ImGui**: For an interactive graphical user interface.
-- These libraries should be installed in the `/c/` directory on your system.
+- **FFmpeg 1.0**: Handles video processing tasks.
+- **SDL2**: Used for rendering graphical components.
+- **Dear ImGui**: Provides the graphical user interface.
+These libraries are expected to be installed in the `/c/` directory of your system.
 
 ## Installation
 
 ### Prerequisites
-Ensure you have the following installed on your system:
+Before compiling the project, ensure the following components are installed and located in the `/c/` directory:
 - FFmpeg 1.0
 - SDL2
 - Dear ImGui
-These should be located in the `/c/` directory as the project setup relies on this path for linking.
 
 ### Compiling the Project
-To compile the project, use the following steps. Make sure you are using MSYS or MinGW64 terminal:
-
+To compile the project, follow these steps in MSYS or MinGW64 terminal:
 1. Navigate to the project directory.
-2. Run the makefile provided with the command:
+2. Execute the makefile with the command:
    ```bash
    make
-    ```
+
 ### Running the Program
 
 Once the project is compiled, you can run the program using the following command format:
-```bash
-    ./build/VideoCompressor <input_video_path> <output_video_path> <target_size_MB>
-```
-- <input_video_path>: Path to the input video file.
-- <output_video_path>: Path where the compressed video will be saved.
-- <target_size_MB>: Desired size of the output video in megabytes.
+    ```bash
+    ./build/VideoCompressor
+This will launch the GUI where the input/output path will be set plus the compression method and target size can also be set by the user.
 
-## GUI
-The GUI, built with SDL2 and Dear ImGui, is under development. It aims to provide an easy-to-use interface for video compression settings, allowing users to choose compression methods, set file paths, and specify target sizes without command-line arguments.
+## Interface Overview
+The GUI provides several interactive elements to configure compression settings:
 
+- **Input File Path**: Field where you input the path of the video file you want to compress. Click in the field to type the path or use a file dialog to select a file.
+- **Output File Path**: Field to specify the path where the compressed video will be saved. Defaults to the same location as the input file with a modified name indicating compression.
+- **Compression Method**: Dropdown menu to select the compression method. Currently supports only 'Two-Pass' method.
+
+- **Target Size (MB)**: Numeric field to enter the desired file size of the compressed video. IF not possible to compress for the desired file size, an error will be raised by the ffmpeg lib.
+
+Below is a screenshot of the GUI:
+
+<img src="GUI.png" alt="GUI Screenshot" width="50%" height="auto">
+
+### Compressing a Video
+After configuring the settings:
+
+1. Click the **Compress** button to start the compression process.
+2. Progress will be displayed within the GUI.
+3. Upon completion, a message will indicate the success or failure of the operation.
