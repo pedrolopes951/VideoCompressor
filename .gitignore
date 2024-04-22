@@ -1,3 +1,6 @@
 .vscode
 /build/
 test/testVideos/
+*.ini
+*.log
+*.stackdump

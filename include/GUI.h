@@ -32,10 +32,10 @@ private:
     VideoCompressorContext* compressorContext;
     SDL_Window* window{nullptr};
     SDL_Renderer* renderer{nullptr};
+    CompressionMethod selectedMethod;
     char inputFilePath[1024];   // Buffer for input file path
     char outputPath[1024];      // Buffer for output file path
     int targetSizeMB;
-    CompressionMethod selectedMethod;
     void setupImGuiStyle();
     void showSettingsWindow(); // New method to show settings
 };

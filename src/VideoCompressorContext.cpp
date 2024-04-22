@@ -1,11 +1,15 @@
 #include "../include/VideoCompressorContext.h"
+#include <iostream>
 
 VideoCompressorContext::VideoCompressorContext(IVideoCompressor *comp) : compressor(comp) {}
 VideoCompressorContext::~VideoCompressorContext() { delete compressor; }
 
 void VideoCompressorContext::setCompressor(IVideoCompressor *comp)
 {
-    delete compressor;
+    if(compressor != nullptr)
+    {
+        delete compressor;
+    }
     compressor = comp;
 }
 

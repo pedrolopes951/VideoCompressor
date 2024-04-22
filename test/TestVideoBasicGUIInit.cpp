@@ -5,13 +5,16 @@
 #include <SDL.h>
 #include <iostream>
 #include <cassert>
+#include "../include/GUI.h"
 
-int main() {
+[[maybe_unused]]
+static void initBasicGUI()
+{
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
         std::cerr << "Error initializing SDL: " << SDL_GetError() << std::endl;
         assert(false);
-        return -1;
+        throw;
     }
 
     // Create an SDL window
@@ -20,7 +23,8 @@ int main() {
         std::cerr << "Failed to create window: " << SDL_GetError() << std::endl;
         assert(false);
         SDL_Quit();
-        return -1;
+        throw;
+        
     }
 
     // Create an SDL renderer
@@ -30,7 +34,8 @@ int main() {
         assert(false);
         SDL_DestroyWindow(window);
         SDL_Quit();
-        return -1;
+                throw;
+
     }
 
     // Setup Dear ImGui context
@@ -80,5 +85,25 @@ int main() {
     SDL_DestroyWindow(window);
     SDL_Quit();
 
+}
+
+
+int main() 
+{
+    //initBasicGUI();
+    GUI gui;
+    gui.initialize();
+
+    // Main loop
+    bool run = true;
+    while (run) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            ImGui_ImplSDL2_ProcessEvent(&event);
+            if (event.type == SDL_QUIT)
+                run = false;
+        }
+        gui.render();
+    }
     return 0;
 }

@@ -2,10 +2,14 @@
 #include "../include/VideoCompressor.h"
 #include <iostream>
 
-const char *CompressionMethodNames[] = {"Two-Pass", "Single-Pass"};
+const char *g_CompressionMethodNames[] = {"Two-Pass", "Single-Pass"};
 
-GUI::GUI()
+
+GUI::GUI() :selectedMethod(CompressionMethod::TwoPass), targetSizeMB(0)
 {
+
+  
+    
 }
 
 GUI::~GUI()
@@ -22,10 +26,11 @@ void GUI::initialize()
         return;
     }
 
-    SDL_Window *window = SDL_CreateWindow("Video Compressor",
+    // Memset Input File and Output File to no string
+    window = SDL_CreateWindow("Video Compressor",
                                           SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                           640, 480, SDL_WINDOW_SHOWN);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
     if (!renderer)
     {
         std::cerr << "Renderer could not be created! SDL Error: " << SDL_GetError() << std::endl;
@@ -37,6 +42,12 @@ void GUI::initialize()
     ImGui_ImplSDLRenderer2_Init(renderer);
 
     setupImGuiStyle();
+
+      // INitialize the bufers of the input and output with example paths
+    strcpy(inputFilePath,"C:\\VideoCompressor\\test\\TestVideos\\TestVideo_1.mp4");
+    strcpy(outputPath,"C:\\VideoCompressor\\test\\TestVideos\\outputVideo.mp4");
+
+    compressorContext = new VideoCompressorContext(nullptr);
 }
 
 void GUI::showSettingsWindow()
@@ -47,12 +58,12 @@ void GUI::showSettingsWindow()
     ImGui::InputText("Input File Path", inputFilePath, sizeof(inputFilePath));
     ImGui::InputText("Output File Path", outputPath, sizeof(inputFilePath));
     // Dropdown for selecting compression method
-    if (ImGui::BeginCombo("Compression Method", CompressionMethodNames[static_cast<int>(selectedMethod)]))
+    if (ImGui::BeginCombo("Compression Method", g_CompressionMethodNames[static_cast<int>(selectedMethod)]))
     {
         for (int i = 0; i < 2; i++)
         {
             bool isSelected = (selectedMethod == static_cast<CompressionMethod>(i));
-            if (ImGui::Selectable(CompressionMethodNames[i], isSelected))
+            if (ImGui::Selectable(g_CompressionMethodNames[i], isSelected))
             {
                 selectedMethod = static_cast<CompressionMethod>(i);
             }
@@ -81,6 +92,7 @@ void GUI::showSettingsWindow()
         }
         compressorContext->compressVideo(inputFilePath, outputPath, targetSizeMB);
     }
+
 
     ImGui::End();
 }

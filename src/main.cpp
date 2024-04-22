@@ -46,41 +46,20 @@ static void printVersionLibs()
 int main(int argc, char *argv[])
 {
 
-    if (argc < 4)
-    {
-        std::cerr << "Usage: " << argv[0] << " <input video path> <output video path> <target size in MB>\n";
-        return 1;
+    GUI gui;
+    gui.initialize();
+
+    // Main loop
+    bool run = true;
+    while (run) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            ImGui_ImplSDL2_ProcessEvent(&event);
+            if (event.type == SDL_QUIT)
+                run = false;
+        }
+        gui.render();
     }
-
-    std::string inputPath = argv[1];
-    std::string outputPath = argv[2];
-    int targetSizeMB = std::stoi(argv[3]);
-
-    VideoCompressorContext context(new TwoPassCompressor());
-
-    if (!context.compressVideo(inputPath, outputPath, targetSizeMB))
-    {
-        std::cerr << "Failed to compress video.\n";
-        return 1;
-    }
-
-    std::cout << "Video compressed successfully to " << outputPath << std::endl;
-
-    // TODO: GUI needs fixing, just rendering black screen
-    // GUI gui;
-    // gui.initialize();
-
-    // // Main loop
-    // bool run = true;
-    // while (run) {
-    //     SDL_Event event;
-    //     while (SDL_PollEvent(&event)) {
-    //         ImGui_ImplSDL2_ProcessEvent(&event);
-    //         if (event.type == SDL_QUIT)
-    //             run = false;
-    //     }
-    //     gui.render();
-    // }
 
     return 0;
 }

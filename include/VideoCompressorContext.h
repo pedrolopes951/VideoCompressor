@@ -10,10 +10,11 @@ and can change it at runtime depending on the user's choice
 
 class VideoCompressorContext {
 private:
-    IVideoCompressor* compressor;
+    IVideoCompressor* compressor{nullptr};
 
 public:
     VideoCompressorContext(IVideoCompressor* comp);
+    VideoCompressorContext() = default;
     ~VideoCompressorContext();
 
     void setCompressor(IVideoCompressor* comp);

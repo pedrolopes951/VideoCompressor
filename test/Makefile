@@ -29,6 +29,11 @@ IMGUI_SOURCES := $(IMGUI_PATH)/imgui.cpp \
 
 IMGUI_OBJS := $(IMGUI_SOURCES:%.cpp=%.o)
 
+
+# Paths to your object files excluding main.o
+OBJS := $(filter-out ../build/src/main.o, $(wildcard ../build/src/*.o))
+
+
 BUILD_DIR := ./build
 TEST_DIR := .
 SRC_FILES := $(wildcard $(TEST_DIR)/*.cpp)
@@ -36,9 +41,9 @@ TEST_EXECS := $(SRC_FILES:$(TEST_DIR)/%.cpp=$(BUILD_DIR)/%)
 
 all: $(TEST_EXECS)
 
-$(BUILD_DIR)/%: $(TEST_DIR)/%.cpp $(IMGUI_OBJS)
+$(BUILD_DIR)/%: $(TEST_DIR)/%.cpp $(IMGUI_OBJS) $(OBJS)
 	mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $< $(IMGUI_OBJS) $(LDFLAGS) $(LDLIBS) -o $@
+	$(CXX) $(CXXFLAGS) $< $(IMGUI_OBJS) $(OBJS) $(LDFLAGS) $(LDLIBS) -o $@
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
