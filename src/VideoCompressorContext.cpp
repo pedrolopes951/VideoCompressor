@@ -18,3 +18,9 @@ bool VideoCompressorContext::compressVideo(const std::string &input, const std::
     
     return compressor->compress(input, output, targetSize);
 }
+
+bool VideoCompressorContext::compressVideo(const std::string &directoryPath, int targetSize)
+{
+    
+    return compressor->compress(directoryPath, targetSize);
+}

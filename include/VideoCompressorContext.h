@@ -20,4 +20,6 @@ public:
     void setCompressor(IVideoCompressor* comp);
 
     bool compressVideo(const std::string& input, const std::string& output, int targetSize);
+    bool compressVideo(const std::string& directoryPath, int targetSize);
+
 };

@@ -16,7 +16,7 @@ INCLUDES := -I$(FFMPEG_DIR) \
             -I$(IMGUI_PATH)/backends \
             -I../src  # Include the project's main source directory for headers
 
-CXXFLAGS := -Wall -MMD -MP -g $(INCLUDES)
+CXXFLAGS := -std=c++17 -Wall -MMD -MP -g $(INCLUDES)
 LDFLAGS := $(foreach dir, $(FFMPEG_LIB_DIRS), -L$(dir)) -L$(SDL_PATH)/lib/x64
 LDLIBS := -lSDL2 -lSDL2main -lavcodec -lavformat -lavfilter -lswscale -lavutil 
 

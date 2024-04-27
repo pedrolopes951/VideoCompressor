@@ -3,11 +3,10 @@
 #include <iostream>
 
 const char *g_CompressionMethodNames[] = {"Two-Pass"};
-
 const int g_NumberMethods = 1;
 
 
-GUI::GUI() :selectedMethod(CompressionMethod::TwoPass), targetSizeMB(0)
+GUI::GUI() :selectedMethod(CompressionMethod::TwoPass), targetSizeMB{3}
 {
 
   
@@ -46,7 +45,7 @@ void GUI::initialize()
     setupImGuiStyle();
 
       // INitialize the bufers of the input and output with example paths
-    strcpy(inputFilePath,"C:\\VideoCompressor\\test\\TestVideos\\TestVideo_1.mp4");
+    strcpy(inputFilePath,"C:\\VideoCompressor\\test\\TestVideos");
     strcpy(outputPath,"C:\\VideoCompressor\\test\\TestVideos\\outputVideo.mp4");
 
     compressorContext = new VideoCompressorContext(nullptr);
@@ -56,9 +55,17 @@ void GUI::showSettingsWindow()
 {
     ImGui::Begin("Compression Settings");
 
-    // Input text for file path
-    ImGui::InputText("Input File Path", inputFilePath, sizeof(inputFilePath));
-    ImGui::InputText("Output File Path", outputPath, sizeof(inputFilePath));
+    static bool compressedDirectory = true;
+    ImGui::Checkbox("Compressed entire directory", &compressedDirectory);
+
+    // Input text for file path with placeholder text
+    if (compressedDirectory) {
+        ImGui::InputText("Input Directory",inputFilePath, sizeof(inputFilePath));
+    } else {
+        ImGui::InputText("Input Path",inputFilePath, sizeof(inputFilePath));
+        ImGui::InputText("Output Path", outputPath, sizeof(outputPath));
+    }
+
     // Dropdown for selecting compression method
     if (ImGui::BeginCombo("Compression Method", g_CompressionMethodNames[static_cast<int>(selectedMethod)]))
     {
@@ -74,6 +81,8 @@ void GUI::showSettingsWindow()
                 ImGui::SetItemDefaultFocus();
             }
         }
+
+
         ImGui::EndCombo();
     }
 
@@ -92,7 +101,14 @@ void GUI::showSettingsWindow()
             std::cerr << "Not valid compresion method, try again" << std::endl;
             break;
         }
-        compressorContext->compressVideo(inputFilePath, outputPath, targetSizeMB);
+        // Handle compression based on the toggle state
+        if (compressedDirectory) {
+            // Assume compressDirectory handles directory compression
+            compressorContext->compressVideo(inputFilePath, targetSizeMB);
+        } else {
+            // Standard file compression
+            compressorContext->compressVideo(inputFilePath, outputPath, targetSizeMB);
+        }
     }
 
 

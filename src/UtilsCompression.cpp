@@ -12,22 +12,25 @@ namespace Utils
         std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose); // Safely manages the file pointer that interacts with the pipe "r"
         if (!pipe)
         {
+            std::cerr << "popen() failed! "  << std::endl;
             throw std::runtime_error("popen() failed!");
         }
         while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
         { // Get the data from the pipe into the buffer
             result += buffer.data();
         }
+        std::cout << "Reching here" << std::endl;
+
         return result;
     }
     // Function to get the duration of the video in seconds
     double getVideoDuration(const std::string &inputPath)
     {
         std::string cmd = "ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"" + inputPath + "\""; // ffprobe to fetch the duration of the video
+        std::cout << cmd << std::endl;
         
         std::string output = exec(cmd.c_str());
         return std::stod(output);
-        //return 0.0;
     }
     /// @brief function calculates how many bits per second (bps) you can use for the video part, aiming to meet a desired file size (in MB) over a given duration (in seconds)
     /// @param fileSizeMB Desired file size of the video to compress
